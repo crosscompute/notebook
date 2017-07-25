@@ -5,8 +5,8 @@
 {% block favicon %}<link id="favicon" rel="shortcut icon" type="image/x-icon" href="{{static_url("base/images/favicon-file.ico") }}">{% endblock %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{{ static_url('components/codemirror/lib/codemirror.css') }}">
-<link rel="stylesheet" href="{{ static_url('components/codemirror/addon/dialog/dialog.css') }}">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/addon/dialog/dialog.min.css">
 {{super()}}
 {% endblock %}
 
@@ -99,5 +99,5 @@ data-file-path="{{file_path}}"
 
     {{super()}}
 
-<script src="{{ static_url("edit/js/main.min.js") }}" type="text/javascript" charset="utf-8"></script>
+<script src="//storage.googleapis.com/crosscompute-20170501/edit.min.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
