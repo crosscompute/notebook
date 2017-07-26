@@ -365,7 +365,7 @@ data-notebook-path="{{notebook_path | urlencode}}"
     sys_info = {{sys_info|safe}};
 </script>
 
-<script src="//unpkg.com/text-encoding@0.6.4/index.js" charset="utf-8"></script>
+<script src="{{ static_url("components/text-encoding/lib/encoding.js") }}" charset="utf-8"></script>
 
 <script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="//storage.googleapis.com/crosscompute-20170501/notebook.min.js" type="text/javascript" charset="utf-8"></script>
