@@ -138,7 +138,7 @@ def find_package_data():
         # pjoin(components, "bootstrap-tour", "build", "js", "bootstrap-tour.min.js"),
         # pjoin(components, "font-awesome", "css", "*.css"),
         # pjoin(components, "es6-promise", "*.js"),
-        # pjoin(components, "font-awesome", "fonts", "*.*"),
+        pjoin(components, "font-awesome", "fonts", "*.*"),
         pjoin(components, "google-caja", "html-css-sanitizer-minified.js"),
         # pjoin(components, "jed", "jed.js"),
         # pjoin(components, "jquery", "jquery.min.js"),
