@@ -22,9 +22,11 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js" type="text/javascript" charset="utf-8"></script>
     <script>
       require.config({
+{#
           {% if version_hash %}
           urlArgs: "v={{version_hash}}",
           {% endif %}
+#}
           baseUrl: '{{static_url("", include_version=False)}}',
           paths: {
             'auth/js/main': '//storage.googleapis.com/crosscompute-20170501/auth.min',
