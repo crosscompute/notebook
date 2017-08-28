@@ -35,11 +35,7 @@ except ImportError: #PY2
 
 from jinja2 import Environment, FileSystemLoader
 
-# Set up message catalog access
-base_dir = os.path.realpath(os.path.join(__file__, '..', '..'))
-trans = gettext.translation('notebook', localedir=os.path.join(base_dir, 'notebook/i18n'), fallback=True)
-trans.install()
-_ = trans.gettext
+from notebook.transutils import trans, _
 
 # Install the pyzmq ioloop. This has to be done before anything else from
 # tornado is imported.
@@ -389,21 +385,31 @@ class NbserverListApp(JupyterApp):
     description=_("List currently running notebook servers.")
     
     flags = dict(
+        jsonlist=({'NbserverListApp': {'jsonlist': True}},
+              _("Produce machine-readable JSON list output.")),
         json=({'NbserverListApp': {'json': True}},
-              _("Produce machine-readable JSON output.")),
+              _("Produce machine-readable JSON object on each line of output.")),
     )
     
+    jsonlist = Bool(False, config=True,
+          help=_("If True, the output will be a JSON list of objects, one per "
+                 "active notebook server, each with the details from the "
+                 "relevant server info file."))
     json = Bool(False, config=True,
           help=_("If True, each line of output will be a JSON object with the "
-                  "details from the server info file."))
+                  "details from the server info file. For a JSON list output, "
+                  "see the NbserverListApp.jsonlist configuration value"))
 
     def start(self):
-        if not self.json:
-            print(_("Currently running servers:"))
-        for serverinfo in list_running_servers(self.runtime_dir):
-            if self.json:
+        serverinfo_list = list(list_running_servers(self.runtime_dir))
+        if self.jsonlist:
+            print(json.dumps(serverinfo_list, indent=2))
+        elif self.json:
+            for serverinfo in serverinfo_list:
                 print(json.dumps(serverinfo))
-            else:
+        else:
+            print("Currently running servers:")
+            for serverinfo in serverinfo_list:
                 url = serverinfo['url']
                 if serverinfo.get('token'):
                     url = url + '?token=%s' % serverinfo['token']

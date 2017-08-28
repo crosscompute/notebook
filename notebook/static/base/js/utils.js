@@ -940,9 +940,17 @@ define([
         if(!window.MathJax){
             return;
         }
-        return $el.map(function(){
+        $el.map(function(){
             // MathJax takes a DOM node: $.map makes `this` the context
-            return MathJax.Hub.Queue(["Typeset", MathJax.Hub, this]);
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, this]);
+            try {
+                MathJax.Hub.Queue(
+                    ["Require", MathJax.Ajax, "[MathJax]/extensions/TeX/AMSmath.js"],
+                    function() { MathJax.InputJax.TeX.resetEquationNumbers(); }
+                );
+            } catch (e) {
+                console.error("Error queueing resetEquationNumbers:", e);
+            }
         });
     };
 
@@ -1103,6 +1111,10 @@ define([
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
         link.href = utils.url_path_join(utils.get_body_data('baseUrl'), src);
+        if (oldLink && (link.href === oldLink.href)) {
+            // This favicon is already set, don't modify the DOM.
+            return;
+        }
         if (oldLink) document.head.removeChild(oldLink);
         document.head.appendChild(link);
     };

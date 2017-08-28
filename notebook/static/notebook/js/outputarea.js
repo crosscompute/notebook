@@ -77,7 +77,6 @@ define([
 
     OutputArea.prototype.style = function () {
         this.collapse_button.hide();
-        this.prompt_overlay.hide();
         
         this.wrapper.addClass('output_wrapper');
         this.element.addClass('output');
@@ -263,6 +262,7 @@ define([
     var MIME_SVG = 'image/svg+xml';
     var MIME_PNG = 'image/png';
     var MIME_JPEG = 'image/jpeg';
+    var MIME_GIF = 'image/gif';
     var MIME_PDF = 'application/pdf';
     var MIME_TEXT = 'text/plain';
     
@@ -275,6 +275,7 @@ define([
         MIME_SVG,
         MIME_PNG,
         MIME_JPEG,
+        MIME_GIF,
         MIME_PDF,
         MIME_TEXT,
     ];
@@ -660,6 +661,7 @@ define([
     OutputArea.safe_outputs[MIME_LATEX] = true;
     OutputArea.safe_outputs[MIME_PNG] = true;
     OutputArea.safe_outputs[MIME_JPEG] = true;
+    OutputArea.safe_outputs[MIME_GIF] = true;
 
     OutputArea.prototype.append_mime_type = function (json, element, handle_inserted) {
         for (var i=0; i < OutputArea.display_order.length; i++) {
@@ -683,7 +685,7 @@ define([
                 // callback, if the mime type is something other we must call the 
                 // inserted callback only when the element is actually inserted
                 // into the DOM.  Use a timeout of 0 to do this.
-                if ([MIME_PNG, MIME_JPEG].indexOf(type) < 0 && handle_inserted !== undefined) {
+                if ([MIME_PNG, MIME_JPEG, MIME_GIF].indexOf(type) < 0 && handle_inserted !== undefined) {
                     setTimeout(handle_inserted, 0);
                 }
                 this.events.trigger('output_appended.OutputArea', [type, value, md, toinsert]);
@@ -711,7 +713,15 @@ define([
         var text_and_math = mathjaxutils.remove_math(markdown);
         var text = text_and_math[0];
         var math = text_and_math[1];
-        marked(text, function (err, html) {
+        // Prevent marked from returning inline styles for table cells
+        var renderer = new marked.Renderer();
+        renderer.tablecell = function (content, flags) {
+          var type = flags.header ? 'th' : 'td';
+          var start_tag = '<' + type + '>';
+          var end_tag = '</' + type + '>\n';
+          return start_tag + content + end_tag;
+        };
+        marked(text, { renderer: renderer }, function (err, html) {
             html = mathjaxutils.replace_math(html, math);
             toinsert.append(html);
         });
@@ -822,7 +832,7 @@ define([
             });
         }
         img[0].src = 'data:image/png;base64,'+ png;
-        set_width_height(img, md, MIME_PNG);
+        set_width_height(img, md, type);
         dblclick_to_reset_size(img);
         toinsert.append(img);
         element.append(toinsert);
@@ -840,7 +850,24 @@ define([
             });
         }
         img[0].src = 'data:image/jpeg;base64,'+ jpeg;
-        set_width_height(img, md, MIME_JPEG);
+        set_width_height(img, md, type);
+        dblclick_to_reset_size(img);
+        toinsert.append(img);
+        element.append(toinsert);
+        return toinsert;
+    };
+    
+    var append_gif = function (gif, md, element, handle_inserted) {
+        var type = MIME_GIF;
+        var toinsert = this.create_output_subarea(md, "output_gif", type);
+        var img = $("<img/>");
+        if (handle_inserted !== undefined) {
+            img.on('load', function(){
+                handle_inserted(img);
+            });
+        }
+        img[0].src = 'data:image/gif;base64,'+ gif;
+        set_width_height(img, md, type);
         dblclick_to_reset_size(img);
         toinsert.append(img);
         element.append(toinsert);
@@ -966,7 +993,8 @@ define([
             // Fix the output div's height if the clear_output is waiting for
             // new output (it is being used in an animation).
             if (!ignore_clear_queue && this.clear_queued) {
-                var height = this.element.height();
+                // this.element.height() rounds the height, so we get the exact value
+                var height = this.element[0].getBoundingClientRect().height;
                 this.element.height(height);
                 this.clear_queued = false;
             }
@@ -1072,6 +1100,7 @@ define([
         MIME_SVG,
         MIME_PNG,
         MIME_JPEG,
+        MIME_GIF,
         MIME_PDF,
         MIME_TEXT
     ];
@@ -1083,6 +1112,7 @@ define([
     OutputArea.append_map[MIME_SVG] = append_svg;
     OutputArea.append_map[MIME_PNG] = append_png;
     OutputArea.append_map[MIME_JPEG] = append_jpeg;
+    OutputArea.append_map[MIME_GIF] = append_gif;
     OutputArea.append_map[MIME_LATEX] = append_latex;
     OutputArea.append_map[MIME_JAVASCRIPT] = append_javascript;
     OutputArea.append_map[MIME_PDF] = append_pdf;
