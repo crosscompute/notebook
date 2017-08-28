@@ -8,7 +8,7 @@
     {% block favicon %}<link id="favicon" rel="shortcut icon" type="image/x-icon" href="{{static_url("base/images/favicon.ico") }}">{% endblock %}
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css" type="text/css" />
-    <link rel="stylesheet" href="//unpkg.com/jquery-typeahead@2.8.0/dist/jquery.typeahead.min.css") }}" type="text/css" />
+    <link rel="stylesheet" href="//unpkg.com/jquery-typeahead@2.9.0/dist/jquery.typeahead.min.css") }}" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     {% block stylesheet %}
@@ -16,10 +16,10 @@
     {% endblock %}
     <link rel="stylesheet" href="{{ base_url }}custom/custom.css" type="text/css" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/preact/8.2.1/preact.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/preact/8.2.4/preact.min.js" type="text/javascript"></script>
     <script src="//unpkg.com/proptypes@1.1.0/index.js" type="text/javascript"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/preact-compat/3.15.0/preact-compat.min.js" type="text/javascript"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/preact-compat/3.17.0/preact-compat.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js" type="text/javascript" charset="utf-8"></script>
     <script>
       require.config({
 {#
@@ -41,8 +41,8 @@
             'jquery-ui': '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min',
             moment: '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min',
             codemirror: 'components/codemirror',
-            xterm: '//cdnjs.cloudflare.com/ajax/libs/xterm/2.8.1/xterm.min',
-            typeahead: '//unpkg.com/jquery-typeahead@2.8.0/dist/jquery.typeahead.min',
+            xterm: '//cdnjs.cloudflare.com/ajax/libs/xterm/2.9.2/xterm.min',
+            typeahead: '//unpkg.com/jquery-typeahead@2.9.0/dist/jquery.typeahead.min',
           },
           map: { // for backward compatibility
               "*": {
