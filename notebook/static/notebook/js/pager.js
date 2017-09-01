@@ -141,7 +141,7 @@ define([
         .append(
                 $('<link>')
                 .attr('rel',"stylesheet")
-                .attr('href', utils.url_path_join(utils.get_body_data('baseUrl'), "static/style/style.min.css"))
+                .attr('href',"//storage.googleapis.com/crosscompute-website-20170828/style.min.css")
                 .attr('type',"text/css")
         )
         .append(
