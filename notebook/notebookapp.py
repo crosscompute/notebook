@@ -277,7 +277,7 @@ class NotebookWebApplication(web.Application):
 
     def init_handlers(self, settings):
         """Load the (URL pattern, handler) tuples for each component."""
-        
+
         # Order matters. The first handler to match the URL will handle the request.
         handlers = []
         handlers.extend(load_handlers('tree.handlers'))
@@ -299,7 +299,8 @@ class NotebookWebApplication(web.Application):
         handlers.extend(load_handlers('services.kernelspecs.handlers'))
         handlers.extend(load_handlers('services.security.handlers'))
         handlers.extend(load_handlers('services.shutdown'))
-        
+        handlers.extend(settings['contents_manager'].get_extra_handlers())
+
         handlers.append(
             (r"/nbextensions/(.*)", FileFindHandler, {
                 'path': settings['nbextensions_path'],
@@ -662,6 +663,9 @@ class NotebookApp(JupyterApp):
 
     @default('token')
     def _token_default(self):
+        if os.getenv('JUPYTER_TOKEN'):
+            self._token_generated = False
+            return os.getenv('JUPYTER_TOKEN')
         if self.password:
             # no token if password is enabled
             self._token_generated = False
@@ -1273,7 +1277,9 @@ class NotebookApp(JupyterApp):
             line = sys.stdin.readline()
             if line.lower().startswith(yes) and no not in line.lower():
                 self.log.critical(_("Shutdown confirmed"))
-                ioloop.IOLoop.current().stop()
+                # schedule stop on the main thread,
+                # since this might be called from a signal handler
+                self.io_loop.add_callback_from_signal(self.io_loop.stop)
                 return
         else:
             print(_("No answer for 5s:"), end=' ')
@@ -1282,11 +1288,11 @@ class NotebookApp(JupyterApp):
         # set it back to original SIGINT handler
         # use IOLoop.add_callback because signal.signal must be called
         # from main thread
-        ioloop.IOLoop.current().add_callback(self._restore_sigint_handler)
+        self.io_loop.add_callback_from_signal(self._restore_sigint_handler)
     
     def _signal_stop(self, sig, frame):
         self.log.critical(_("received signal %s, stopping"), sig)
-        ioloop.IOLoop.current().stop()
+        self.io_loop.add_callback_from_signal(self.io_loop.stop)
 
     def _signal_info(self, sig, frame):
         print(self.notebook_info())
@@ -1515,9 +1521,9 @@ def list_running_servers(runtime_dir=None):
     if not os.path.isdir(runtime_dir):
         return
 
-    for file in os.listdir(runtime_dir):
-        if file.startswith('nbserver-'):
-            with io.open(os.path.join(runtime_dir, file), encoding='utf-8') as f:
+    for file_name in os.listdir(runtime_dir):
+        if file_name.startswith('nbserver-'):
+            with io.open(os.path.join(runtime_dir, file_name), encoding='utf-8') as f:
                 info = json.load(f)
 
             # Simple check whether that process is really still running
@@ -1527,7 +1533,7 @@ def list_running_servers(runtime_dir=None):
             else:
                 # If the process has died, try to delete its info file
                 try:
-                    os.unlink(os.path.join(runtime_dir, file))
+                    os.unlink(os.path.join(runtime_dir, file_name))
                 except OSError:
                     pass  # TODO: This should warn or log or something
 #-----------------------------------------------------------------------------
