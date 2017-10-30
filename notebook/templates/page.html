@@ -7,13 +7,14 @@
     <title>{% block title %}Jupyter Notebook{% endblock %}</title>
     {% block favicon %}<link id="favicon" rel="shortcut icon" type="image/x-icon" href="{{static_url("base/images/favicon.ico") }}">{% endblock %}
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css" type="text/css" />
-    <link rel="stylesheet" href="//unpkg.com/jquery-typeahead@2.9.0/dist/jquery.typeahead.min.css") }}" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="//unpkg.com/jquery-typeahead@2.9.0/dist/jquery.typeahead.min.css" type="text/css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css" />
     {% block stylesheet %}
     <link rel="stylesheet" href="//storage.googleapis.com/crosscompute-website-20170828/style.min.css" type="text/css"/>
     {% endblock %}
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" />
     <link rel="stylesheet" href="{{ base_url }}custom/custom.css" type="text/css" />
     <script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/4.1.1/es6-promise.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/preact/8.2.4/preact.min.js" type="text/javascript"></script>
